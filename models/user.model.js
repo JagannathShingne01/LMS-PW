@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const userSchema = new Schema({
-    fullName:{
+    fullName: {
         type:"String",
         required:[true,"Name is Required"],
         minLength:[5,"Name Must Be at least 5 Charchter"],
@@ -11,13 +11,13 @@ const userSchema = new Schema({
         lowercase:true,
         trim:true
     },
-    email:{
+    email: {
         type:"String",
         lowercase:true,
         trim:true,
         unique:true
     },
-    password:{
+    password: {
         type:"String",
         required:[true,"Password is Required"],
         minLength:[8,"Password Must be at least 8 Characters"],
@@ -31,7 +31,7 @@ const userSchema = new Schema({
             type:"String"
         }
     },   
-    role:{
+    role: {
         type: "String",
         enum:["USER","ADMIN"],
         default: "USER"
