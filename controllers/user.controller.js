@@ -160,10 +160,10 @@ const forgotPassword = async (req, res) => {
      await user.save();
 
      const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-     console.log(resetPasswordURL);
+    //  console.log(resetPasswordURL);
 
      const subject = "Reset Password"
-     const message = `you can reset your password by clicking <a herf=${resetPasswordURL} target= "_blank">Reset your password</a>\nIf the above link does not work for some reason then copy paste this link in new tab ${resetPasswordURL}.\n If you have not requested this, kindly ignore. `
+     const message = `you can reset your password by clicking <a href=${resetPasswordURL} target= "_blank">Reset your password</a>\nIf the above link does not work for some reason then copy paste this link in new tab ${resetPasswordURL}.\n If you have not requested this, kindly ignore. `
      try{
         await sendEmail(email, subject, message);
 
@@ -183,7 +183,7 @@ const forgotPassword = async (req, res) => {
 }
 
 
-const resetPassword = async (req, res) => {
+const resetPassword = async (req, res, next) => {
     const { resetToken } = req.params;
 
     const { password } = req.body;
@@ -195,7 +195,7 @@ const resetPassword = async (req, res) => {
 
     const user = await User.findOne({
         forgotPasswordToken,
-        forgotPasswordExpiry: { $gt: Date.now }
+        forgotPasswordExpiry: { $gt: Date.now() }
     });
     
     if (!user) {
@@ -208,7 +208,7 @@ const resetPassword = async (req, res) => {
     user.forgotPasswordToken = undefined;
     user.forgotPasswordExpiry = undefined;
 
-    user.save();
+    await user.save();
 
     res.status(200).json({
         success: true,
