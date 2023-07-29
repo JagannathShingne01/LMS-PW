@@ -47,6 +47,7 @@ const getLecturesByCourseId = async function(req, res, next) {
 
 
 const createCourse = async (req, res, next)=>{
+    try {
     const { title, description, category, createdBy } = req.body;
 
     if ( !title || !description || !category || !createdBy) {
@@ -89,15 +90,70 @@ const createCourse = async (req, res, next)=>{
         message: "Course created successfully",
         course
     });
+    } catch (e) {
+        return next(
+            new AppError(e.message, 500)
+            )
+    }
+    
 }
 
 
 const updateCourse = async (req, res, next)=>{
+    try {
+        const { id } = req.params;
+        const course = await Course.findByIdAndUpdate(
+            id,
+            {
+                $set: req.body
+            },
+            {
+                runValidators: true
+            }
+        );
 
+        if (!course) {
+            return next(
+                new AppError("Course with given id does not exist!", 400)
+                )
+        }
+        
+        res.status(200).json({
+            success: true,
+            message: "Course updated successfully!",
+            course
+        })
+
+
+    } catch (e) {
+        return next(
+            new AppError(e.message, 500)
+            )
+    }
 }
 
 const removeCourse = async (req, res, next)=>{
+    try {
+        const { id } = req.params;
+        const course = await Course.findById(id);
 
+        if (!course) {
+            return next(
+                new AppError("Course with given id does not exist!", 400)
+                )
+        }
+
+        await course.deleteOne();
+        res.status(200).json({
+            success: true,
+            message: "Course deleted successfully"
+        })
+
+    } catch (e) {
+        return next(
+            new AppError(e.message, 500)
+            )
+    }
 }
 
 
