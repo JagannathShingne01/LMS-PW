@@ -83,7 +83,7 @@ const register = async (req, res, next) => {
 };
 
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -115,7 +115,7 @@ const login = async (req, res) => {
 };
 
 
-const logout = (req, res) => {
+const logout = (req, res, next) => {
     res.cookie("token",null,{
         secure: true,
         maxAge:0,
@@ -127,7 +127,7 @@ const logout = (req, res) => {
     })
 };
 
-const getProfile = async (req, res) => {
+const getProfile = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const user = await User.findById(userId);
