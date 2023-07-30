@@ -230,6 +230,7 @@ const addLectureToCourseById = async (req, res, next)=>{
 
 }
 
+
 export{
     getAllCourses,
     getLecturesByCourseId,

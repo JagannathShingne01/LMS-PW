@@ -4,7 +4,6 @@ import { authorizedRoles, isLoggedIn } from "../middleware/auth.middleware.js";
 import upload from "../middleware/multer.midddleware.js";
 
 const router = Router();
-
 router.route("/")
     .get(getAllCourses)
     .post(
@@ -20,6 +19,7 @@ router.route("/:id")
     )
     .put(
         isLoggedIn,
+
         authorizedRoles("ADMIN"),
         updateCourse
     )
