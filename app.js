@@ -33,8 +33,8 @@ app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/course", courseRoutes)
 app.use("/api/v1/payments", paymentRoutes)
 
-
-app.all("*",(req, res)=>{
+//if the search url does not exist then is will show OOPS!
+app.all("*",(req, res)=>{                       
     res.status(404).send("OOPS!!!")
 })
 

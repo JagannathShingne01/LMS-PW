@@ -13,7 +13,7 @@ export const getRazorpayApiKey = async (req, res, next) => {
 
 export const buySubscription = async (req, res, next) => {
     try {
-        const { id } = req.user;
+    const { id } = req.user;
     const user = await User.findById(id);
 
     if (!user) {

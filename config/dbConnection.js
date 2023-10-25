@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", false);  // if some parameter does not exsist then it will egnore it,not give any error.
 
 const connectionToDB = async () => {
     try{
@@ -13,7 +13,7 @@ const connectionToDB = async () => {
         }
     }catch(e){
         console.log(e);
-        process.exit(1);
+        process.exit(1);         // terminate the process
     }
 }
 
