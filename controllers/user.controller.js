@@ -5,6 +5,9 @@ import cloudinary from "cloudinary";
 import fs from "fs/promises";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
+import bcrypt from "bcrypt"
+
+// const bcrypt = require('bcrypt');
 
 const cookieOptions = {
     maxAge: 7 * 24 * 60 * 1000,   // 7 days
@@ -86,16 +89,22 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-
         if(!email || !password){
             return next(new AppError("All fields are required", 400));
         }
+
          const user = await User.findOne({
             email
          }).select("+password");
     
-         if(!user || !user.comparePassword(password)){
-            return next(new AppError("Email or password does not match", 400))
+         if (!user) {
+            return next(new AppError("Email or password does not match", 400));
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        
+        if (!passwordMatch) {
+            return next(new AppError("Email or password does not match", 400));
         }
     
         const token = await user.generateJWTToken();
