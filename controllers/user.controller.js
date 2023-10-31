@@ -269,7 +269,7 @@ const changePassword =async (req, res, next)=>{
 
 const updateUser = async (req, res, next) => {
     const { fullName } = req.body;
-    const { id } = req.user.id;
+    const { id } = req.params;
 
     const user = await User.findById(id);
 
@@ -280,7 +280,7 @@ const updateUser = async (req, res, next) => {
         )
     }
 
-    if(req.fullName){
+    if(fullName){
         user.fullName = fullName;
     }
 

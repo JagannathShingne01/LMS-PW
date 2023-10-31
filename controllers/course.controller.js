@@ -5,7 +5,7 @@ import cloudinary from "cloudinary";
 
 const getAllCourses = async function(req, res, next) {
    try {
-    const course = await Course.find({}).select("-lectures");
+    const courses = await Course.find({}).select("-lectures");
 
     res.status(200).json({
         success: true,
