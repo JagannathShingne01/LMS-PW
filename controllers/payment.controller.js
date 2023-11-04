@@ -97,7 +97,7 @@ export const verifySubscription = async (req, res, next) => {
 };
 
 export const cancleSubscription = async (req, res, next) => {
-   try {
+
     const { id } = req.user;
     const user = await User.findById(id);
 
@@ -107,24 +107,29 @@ export const cancleSubscription = async (req, res, next) => {
         )
     }
 
-    if (!user.role === "ADMIN") {
-        return next("Admin cannot purchase a subscription", 400)
-    }
+    if (user.role === 'ADMIN') {
+        return next(
+          new AppError('Admin cannot cancel subscription', 400)
+        );
+      }
 
     const subscriptionID = user.subscription.id;
 
-    const subscription = await razorpay.subscriptions.cancel(
-        subscriptionID
-    )
+    try {
+        const subscription = await razorpay.subscriptions.cancel(
+          subscriptionID // subscription id
+        );
+    
+        // Adding the subscription status to the user account
+        user.subscription.status = subscription.status;
+    
+        // Saving the user object
+        await user.save();
+      } catch (error) {
+        // Returning error if any, and this error is from razorpay so we have statusCode and message built in
+        return next(new AppError(error.error.description, error.statusCode));
+      }
 
-    user.subscription.status = subscription.status;
-
-    await user.save();
-    }catch (e) {
-         return next(
-         new AppError(e.message, 500)
-        )
-    }
 }
 
 export const allPayments = async (req, res, next) => {
@@ -140,3 +145,17 @@ export const allPayments = async (req, res, next) => {
         subscriptions
     })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
