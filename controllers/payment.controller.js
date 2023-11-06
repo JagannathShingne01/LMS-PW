@@ -99,41 +99,32 @@ export const verifySubscription = async (req, res, next) => {
 export const cancelSubscription = async (req, res, next) => {
     const { id } = req.user;
   try{
-    // Finding the user
     const user = await User.findById(id);
   
-    // Checking the user role
     if (user.role === 'ADMIN') {
       return next(
         new AppError('Admin does not need to cannot cancel subscription', 400)
       );
     }
   
-    // Finding subscription ID from subscription
     const subscriptionId = user.subscription.id;
   
-    // Creating a subscription using razorpay that we imported from the server
     try {
       const subscription = await razorpay.subscriptions.cancel(
-        subscriptionId // subscription id
+        subscriptionId 
       );
   
-      // Adding the subscription status to the user account
       user.subscription.status = subscription.status;
   
-      // Saving the user object
       await user.save();
     } catch (error) {
-      // Returning error if any, and this error is from razorpay so we have statusCode and message built in
       return next(new AppError(error.error.description, error.statusCode));
     }
   
-    // Finding the payment using the subscription ID
     const payment = await Payment.findOne({
       razorpay_subscription_id: subscriptionId,
     });
   
-    // Getting the time from the date of successful payment (in milliseconds)
     const timeSinceSubscribed = Date.now() - payment.createdAt;
   
     // refund period which in our case is 14 days
@@ -149,17 +140,14 @@ export const cancelSubscription = async (req, res, next) => {
       );
     }
   
-    // If refund period is valid then refund the full amount that the user has paid
     await razorpay.payments.refund(payment.razorpay_payment_id, {
       speed: 'optimum', // This is required
     });
   
-    user.subscription.id = undefined; // Remove the subscription ID from user DB
-    user.subscription.status = undefined; // Change the subscription Status in user DB
-  
+    user.subscription.id = undefined; 
+    user.subscription.status = undefined; 
     await user.save();
   
-    // Send the response
     res.status(200).json({
       success: true,
       message: 'Subscription canceled successfully',
@@ -175,10 +163,9 @@ export const cancelSubscription = async (req, res, next) => {
 export const allPayments = async (req, res, next) => {
     const { count, skip } = req.query;
   
-    // Find all subscriptions from razorpay
     const allPayments = await razorpay.subscriptions.all({
-      count: count ? count : 10, // If count is sent then use that else default to 10
-      skip: skip ? skip : 0, // // If skip is sent then use that else default to 0
+      count: count ? count : 10, 
+      skip: skip ? skip : 0, 
     });
   
     const monthNames = [
@@ -212,7 +199,6 @@ export const allPayments = async (req, res, next) => {
     };
   
     const monthlyWisePayments = allPayments.items.map((payment) => {
-      // We are using payment.start_at which is in unix time, so we are converting it to Human readable format using Date()
       const monthsInNumbers = new Date(payment.start_at * 1000);
   
       return monthNames[monthsInNumbers.getMonth()];
