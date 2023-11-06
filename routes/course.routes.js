@@ -33,6 +33,11 @@ router.route("/:id")
         authorizedRoles("ADMIN"),
         upload.single("lecture"),
         addLectureToCourseById
-    );
+    )
+    .delete(
+        isLoggedIn,
+        authorizedRoles("ADMIN"),
+        removeCourse
+    )
 
 export default router;
