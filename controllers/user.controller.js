@@ -18,7 +18,6 @@ const cookieOptions = {
 
 const register = async (req, res, next) => {
     const { fullName, email, password } = req.body;
-    console.log(req.body);
     if(!fullName || !email || !password){
         return next(new AppError("All fields are required", 400));
     }
@@ -45,7 +44,6 @@ const register = async (req, res, next) => {
 
     }
 
-    console.log("File Details > ",JSON.stringify(req.file));
     if(req.file) {
         
         try {
@@ -169,7 +167,6 @@ const forgotPassword = async (req, res, next) => {
      await user.save();
 
      const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-      console.log(resetPasswordURL);
 
      const subject = "Reset Password"
      const message = `you can reset your password by clicking <a href=${resetPasswordURL} target= "_blank">Reset your password</a>\nIf the above link does not work for some reason then copy paste this link in new tab ${resetPasswordURL}.\n If you have not requested this, kindly ignore. `
