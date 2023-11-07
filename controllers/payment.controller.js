@@ -116,7 +116,7 @@ export const cancelSubscription = async (req, res, next) => {
   
       user.subscription.status = subscription.status;
   
-      await user.save();
+      const js = await user.save();
     } catch (error) {
       return next(new AppError(error.error.description, error.statusCode));
     }
