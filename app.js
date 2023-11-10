@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
 
 app.use(cors({
-    origin: [process.https://coursify-dun.vercel.app],
+    origin: "https://coursify-dun.vercel.app",
     credentials: true
 }));
 
