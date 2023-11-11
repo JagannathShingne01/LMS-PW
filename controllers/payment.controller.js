@@ -160,68 +160,68 @@ export const cancelSubscription = async (req, res, next) => {
 };
   
 
-export const cancelSubscription = async (req, res, next) => {
-    const { id } = req.user;
-  try{
-    const user = await User.findById(id);
+// export const cancelSubscription = async (req, res, next) => {
+//     const { id } = req.user;
+//   try{
+//     const user = await User.findById(id);
   
-    if (user.role === 'ADMIN') {
-      return next(
-        new AppError('Admin does not need to cannot cancel subscription', 400)
-      );
-    }
+//     if (user.role === 'ADMIN') {
+//       return next(
+//         new AppError('Admin does not need to cannot cancel subscription', 400)
+//       );
+//     }
   
-    const subscriptionId = user.subscription.id;
+//     const subscriptionId = user.subscription.id;
   
-    try {
-      const subscription = await razorpay.subscriptions.cancel(
-        subscriptionId 
-      );
+//     try {
+//       const subscription = await razorpay.subscriptions.cancel(
+//         subscriptionId 
+//       );
   
-      user.subscription.status = subscription.status;
+//       user.subscription.status = subscription.status;
   
-      const js = await user.save();
-    } catch (error) {
-      return next(new AppError(error.error.description, error.statusCode));
-    }
+//       const js = await user.save();
+//     } catch (error) {
+//       return next(new AppError(error.error.description, error.statusCode));
+//     }
   
-    const payment = await Payment.findOne({
-      razorpay_subscription_id: subscriptionId,
-    });
+//     const payment = await Payment.findOne({
+//       razorpay_subscription_id: subscriptionId,
+//     });
   
-    const timeSinceSubscribed = Date.now() - payment.createdAt;
+//     const timeSinceSubscribed = Date.now() - payment.createdAt;
   
-    // refund period which in our case is 14 days
-    const refundPeriod = 14 * 24 * 60 * 60 * 1000;
+//     // refund period which in our case is 14 days
+//     const refundPeriod = 14 * 24 * 60 * 60 * 1000;
   
-    // Check if refund period has expired or not
-    if (refundPeriod <= timeSinceSubscribed) {
-      return next(
-        new AppError(
-          'Refund period is over, so there will not be any refunds provided.',
-          400
-        )
-      );
-    }
+//     // Check if refund period has expired or not
+//     if (refundPeriod <= timeSinceSubscribed) {
+//       return next(
+//         new AppError(
+//           'Refund period is over, so there will not be any refunds provided.',
+//           400
+//         )
+//       );
+//     }
   
-    await razorpay.payments.refund(payment.razorpay_payment_id, {
-      speed: 'optimum', // This is required
-    });
+//     await razorpay.payments.refund(payment.razorpay_payment_id, {
+//       speed: 'optimum', // This is required
+//     });
   
-    user.subscription.id = undefined; 
-    user.subscription.status = undefined; 
-    await user.save();
+//     user.subscription.id = undefined; 
+//     user.subscription.status = undefined; 
+//     await user.save();
   
-    res.status(200).json({
-      success: true,
-      message: 'Subscription canceled successfully',
-    });
- } catch (e) {
-    return next(
-        new AppError(e.message, 500)
-    )
-}
-};
+//     res.status(200).json({
+//       success: true,
+//       message: 'Subscription canceled successfully',
+//     });
+//  } catch (e) {
+//     return next(
+//         new AppError(e.message, 500)
+//     )
+// }
+// };
   
 
 export const allPayments = async (req, res, next) => {
