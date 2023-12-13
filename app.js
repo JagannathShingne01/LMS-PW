@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
 
 app.use(cors({
-    origin: "https://coursify-dun.vercel.app",
+    origin: [process.env.FRONTEND_URL],
     credentials: true
 }));
 
