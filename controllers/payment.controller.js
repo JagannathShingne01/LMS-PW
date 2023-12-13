@@ -161,6 +161,9 @@ export const cancelSubscription = async (req, res, next) => {
   
 
 export const allPayments = async (req, res, next) => {
+  try{
+
+ 
     const { count, skip } = req.query;
   
     const allPayments = await razorpay.subscriptions.all({
@@ -225,6 +228,11 @@ export const allPayments = async (req, res, next) => {
       finalMonths,
       monthlySalesRecord,
     });
+  }catch(e){
+    return next(
+      new AppError(e.message, 500)
+    )
+  }
 };
 
 
